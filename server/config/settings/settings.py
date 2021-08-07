@@ -10,6 +10,7 @@ ROOT_URLCONF = 'config.urls'
 WSGI_APPLICATION = 'config.wsgi.application'
 ALLOWED_HOSTS = ['*']
 SITE_ID = 1
+AUTH_USER_MODEL = 'users.User'
 
 ##################################################################
 # Debug settings (with docker)
@@ -129,6 +130,7 @@ FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o777
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
 
