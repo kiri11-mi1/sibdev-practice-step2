@@ -1,22 +1,19 @@
-from rest_framework.generics import CreateAPIView, ListAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 
 from . import serializers
 from .models import User
 
 
-class UserView(CreateAPIView):
+class UserCreateView(CreateAPIView):
     queryset = User.objects.all()
-    serializer_class = serializers.UserSerializer
+    serializer_class = serializers.UserCreateSerializer
 
 
-class AboutUserView(ListAPIView):
+class UserInfoView(RetrieveAPIView):
     queryset = User.objects.all()
-    serializer_class = serializers.AboutUserSerializer
+    serializer_class = serializers.UserInfoSerializer
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, *args, **kwargs):
-        queryset = request.user
-        serializer = self.get_serializer(queryset)
-        return Response(serializer.data)
+    def get_object(self):
+        return self.request.user
