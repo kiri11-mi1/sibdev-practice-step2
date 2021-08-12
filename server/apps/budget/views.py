@@ -12,10 +12,12 @@ class CategoryView(viewsets.ModelViewSet):
     serializer_class = serializers.CategorySerializer
     queryset = models.Category.objects.all()
 
+    def get_queryset(self):
+        return models.Category.objects.filter(transaction__isnull=False).annotate(sum=Sum(('transaction__amount')))
+
     @action(detail=False, methods=['GET'])
     def get_all_categories_info(self, request):
-        all_categories = models.Category.objects.filter(transaction__isnull=False).annotate(sum=Sum(('transaction__amount')))
-        serializer = self.get_serializer(all_categories, many=True)
+        serializer = self.get_serializer(self.get_queryset(), many=True)
         return Response(serializer.data)
 
 

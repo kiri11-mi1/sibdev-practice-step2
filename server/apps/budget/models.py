@@ -2,6 +2,7 @@ from django.db import models
 from apps.users.models import User
 from datetime import date
 
+
 class Category(models.Model):
     TYPES = (
         (0, 'Доход'),
@@ -20,7 +21,7 @@ class Category(models.Model):
 
 
 class Transaction(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Владелец')
+    owner = models.ForeignKey(to='users.User', on_delete=models.CASCADE, verbose_name='Владелец')
     category = models.ForeignKey(Category, verbose_name='Категория', on_delete=models.SET_NULL, null=True)
     amount = models.DecimalField(verbose_name='Сумма',max_digits=15, decimal_places=2, default=0)
     date = models.DateField(verbose_name='Дата операции', default=date.today)
