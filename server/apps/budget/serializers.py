@@ -12,7 +12,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class TransactionSerializer(serializers.ModelSerializer):
-    # category = serializers.PrimaryKeyRelatedField(source='category', write_only=True)
     category_type = fields.IntegerField(source='category.type', read_only=True)
 
     class Meta:
