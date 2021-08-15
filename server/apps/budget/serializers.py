@@ -4,11 +4,11 @@ from . import models
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    sum = fields.IntegerField(read_only=True)
+    amount = fields.DecimalField(max_digits=15, decimal_places=2, read_only=True)
 
     class Meta:
         model = models.Category
-        fields = ('id', 'name', 'type', 'owner', 'sum',)
+        fields = ('id', 'name', 'type', 'owner', 'amount')
 
 
 class TransactionSerializer(serializers.ModelSerializer):
