@@ -12,18 +12,22 @@ from .pagination import StandardResultsSetPagination
 
 class CategoryView(viewsets.ModelViewSet):
     serializer_class = serializers.CategorySerializer
-    queryset = models.Category.objects.all()
+
+    def get_queryset(self):
+        queryset = models.Category.objects.all()
+        if self.action == 'get_all_categories_info':
+            queryset = queryset.annotate(
+                amount=Coalesce(
+                    Sum('transaction__amount'), 
+                    Value(0),
+                    output_field=DecimalField()
+                )
+            )
+        return queryset
 
     @action(detail=False, methods=['GET'])
     def get_all_categories_info(self, request):
-        all_categories = self.queryset.annotate(
-            amount=Coalesce(
-                Sum('transaction__amount'), 
-                Value(0),
-                output_field=DecimalField()
-            )
-        )
-        serializer = self.get_serializer(all_categories, many=True)
+        serializer = self.get_serializer(self.get_queryset(), many=True)
         return Response(serializer.data)
 
 

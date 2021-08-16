@@ -3,5 +3,5 @@ from . import views
 
 
 router = routers.SimpleRouter()
-router.register('category', views.CategoryView)
-router.register('transactions', views.TransactionViewSet)
+router.register('category', views.CategoryView, basename='Category')
+router.register('transactions', views.TransactionViewSet, basename='Transaction')
