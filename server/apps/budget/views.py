@@ -35,26 +35,30 @@ class CategoryView(viewsets.ModelViewSet):
 class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.TransactionSerializer
     pagination_class = StandardResultsSetPagination
-    queryset = models.Transaction.objects.all()
+
+    def get_queryset(self):
+        queryset = models.Transaction.objects.all()
+        if self.action == 'global_info':
+            queryset = queryset.aggregate(
+                income=Coalesce(
+                    Sum(
+                        'amount', 
+                        filter=Q(category__type=0),
+                    ), 
+                    Value(0),
+                    output_field=DecimalField(),
+                ),
+                expense=Coalesce(
+                    Sum(
+                        'amount',
+                        filter=Q(category__type=1),
+                    ),
+                    Value(0),
+                    output_field=DecimalField(),
+                )
+            )
+        return queryset
 
     @action(detail=False, methods=['GET'])
     def global_info(self, request):
-        amount_by_categories = self.queryset.aggregate(
-            income=Coalesce(
-                Sum(
-                    'amount', 
-                    filter=Q(category__type=0),
-                ), 
-                Value(0),
-                output_field=DecimalField(),
-            ),
-            expense=Coalesce(
-                Sum(
-                    'amount',
-                    filter=Q(category__type=1),
-                ),
-                Value(0),
-                output_field=DecimalField(),
-            )
-        )
-        return Response(amount_by_categories)
+        return Response(self.get_queryset())
