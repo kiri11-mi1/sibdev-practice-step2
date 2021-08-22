@@ -5,10 +5,12 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Sum, Value, DecimalField, Q
 from django.db.models.functions import Coalesce
+from django_filters.rest_framework import DjangoFilterBackend
 
 from . import models
 from . import serializers
 from .pagination import StandardResultsSetPagination
+from . import filters
 
 
 class CategoryView(viewsets.ModelViewSet):
@@ -35,6 +37,9 @@ class CategoryView(viewsets.ModelViewSet):
 class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.TransactionSerializer
     pagination_class = StandardResultsSetPagination
+
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = filters.TransactionFilter
 
     def get_queryset(self):
         queryset = models.Transaction.objects.all()
