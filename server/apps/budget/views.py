@@ -15,15 +15,20 @@ from . import filters
 
 class CategoryView(viewsets.ModelViewSet):
     serializer_class = serializers.CategorySerializer
+    filter_backends = (DjangoFilterBackend,)
+
 
     def get_queryset(self):
         queryset = models.Category.objects.all()
         if self.action == 'get_all_categories_info':
-            queryset = queryset.annotate(
-                amount=Coalesce(
-                    Sum('transaction__amount'), 
-                    Value(0),
-                    output_field=DecimalField()
+            self.filterset_class = filters.CategoryFilter
+            queryset = self.filter_queryset(
+                queryset.annotate(
+                    amount=Coalesce(
+                        Sum('transaction__amount'),
+                        Value(0),
+                        output_field=DecimalField()
+                    )
                 )
             )
         return queryset
@@ -42,14 +47,15 @@ class TransactionViewSet(viewsets.ModelViewSet):
     filterset_class = filters.TransactionFilter
 
     def get_queryset(self):
-        queryset = models.Transaction.objects.all()
+        # queryset = models.Transaction.objects.all()
+        queryset = self.filter_queryset(models.Transaction.objects.all())
         if self.action == 'global_info':
             queryset = queryset.aggregate(
                 income=Coalesce(
                     Sum(
-                        'amount', 
+                        'amount',
                         filter=Q(category__type=0),
-                    ), 
+                    ),
                     Value(0),
                     output_field=DecimalField(),
                 ),
