@@ -9,6 +9,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'rest_framework',
     'django_filters',
+    'colorfield',
 ]
 
 LOCAL_APPS = [
