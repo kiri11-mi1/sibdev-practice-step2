@@ -13,14 +13,13 @@ from .pagination import StandardResultsSetPagination
 from . import filters
 
 
-class CategoryView(viewsets.ModelViewSet):
+class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.CategorySerializer
-    filter_backends = (DjangoFilterBackend,)
-
 
     def get_queryset(self):
         queryset = models.Category.objects.all()
         if self.action == 'get_all_categories_info':
+            self.filter_backends = (DjangoFilterBackend,)
             self.filterset_class = filters.CategoryFilter
             queryset = self.filter_queryset(
                 queryset.annotate(
@@ -47,7 +46,6 @@ class TransactionViewSet(viewsets.ModelViewSet):
     filterset_class = filters.TransactionFilter
 
     def get_queryset(self):
-        # queryset = models.Transaction.objects.all()
         queryset = self.filter_queryset(models.Transaction.objects.all())
         if self.action == 'global_info':
             queryset = queryset.aggregate(
