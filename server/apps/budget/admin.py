@@ -10,3 +10,8 @@ class TransactionAdmin(admin.ModelAdmin):
 @admin.register(models.Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'owner', 'type']
+
+
+@admin.register(models.Widget)
+class WidgetAdmin(admin.ModelAdmin):
+    list_display = ['criterion', 'limit', 'category', 'duration', 'owner', 'created']

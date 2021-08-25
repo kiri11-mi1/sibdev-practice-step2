@@ -71,3 +71,19 @@ class TransactionViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'])
     def global_info(self, request):
         return Response(self.get_queryset())
+
+
+class WidgetViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.WidgetSerializer
+
+    def get_queryset(self):
+        queryset = models.Widget.objects.all()
+        if self.action == 'list':
+            queryset = queryset.annotate(
+                amount=Coalesce(
+                    Sum('category__transaction__amount'),
+                    Value(0),
+                    output_field=DecimalField()
+                )
+            )
+        return queryset

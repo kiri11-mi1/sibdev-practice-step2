@@ -17,3 +17,19 @@ class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Transaction
         fields = ('id', 'owner', 'amount', 'date', 'category', 'category_type',)
+
+
+class WidgetSerializer(serializers.ModelSerializer):
+    amount = fields.DecimalField(max_digits=15, decimal_places=2, read_only=True)
+    duration = fields.SerializerMethodField()
+    end_date = fields.SerializerMethodField()
+
+    def get_duration(self, obj):
+        return obj.duration.days
+
+    def get_end_date(self, obj):
+        return obj.created + obj.duration
+
+    class Meta:
+        model = models.Widget
+        fields = ('id', 'owner', 'category', 'limit', 'duration', 'criterion', 'color', 'created', 'amount', 'end_date',)
