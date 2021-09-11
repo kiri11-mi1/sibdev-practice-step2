@@ -3,6 +3,8 @@ from django.utils import translation
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsOwner
 from django.db.models import Sum, Value, DecimalField, Q
 from django.db.models.functions import Coalesce
 from django_filters.rest_framework import DjangoFilterBackend
@@ -15,6 +17,7 @@ from . import filters
 
 class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.CategorySerializer
+    permission_classes = [IsAuthenticated, IsOwner]
 
     def get_queryset(self):
         queryset = models.Category.objects.all()
@@ -44,6 +47,8 @@ class TransactionViewSet(viewsets.ModelViewSet):
 
     filter_backends = (DjangoFilterBackend,)
     filterset_class = filters.TransactionFilter
+
+    permission_classes = [IsAuthenticated, IsOwner]
 
     def get_queryset(self):
         queryset = self.filter_queryset(models.Transaction.objects.all())
@@ -75,6 +80,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
 
 class WidgetViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.WidgetSerializer
+    permission_classes = [IsAuthenticated, IsOwner]
 
     def get_queryset(self):
         queryset = models.Widget.objects.all()
