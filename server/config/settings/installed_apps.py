@@ -10,6 +10,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'colorfield',
+    'drf_yasg',
 ]
 
 LOCAL_APPS = [
