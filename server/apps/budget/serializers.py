@@ -21,11 +21,8 @@ class TransactionSerializer(serializers.ModelSerializer):
 
 class WidgetSerializer(serializers.ModelSerializer):
     amount = fields.DecimalField(max_digits=15, decimal_places=2, read_only=True)
-    duration = fields.SerializerMethodField()
+    duration = serializers.DurationField()
     end_date = fields.SerializerMethodField()
-
-    def get_duration(self, obj):
-        return obj.duration.days
 
     def get_end_date(self, obj):
         return obj.created + obj.duration
