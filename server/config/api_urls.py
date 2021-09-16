@@ -1,4 +1,4 @@
-from re import I
+from .yasg import urlpatterns as doc_urls
 from django.urls import include, path
 from django.conf.urls import url
 from rest_framework_simplejwt.views import (
@@ -12,4 +12,4 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     url('users/', include('apps.users.urls')),
     url('budget/', include('apps.budget.urls'))
-]
+] + doc_urls

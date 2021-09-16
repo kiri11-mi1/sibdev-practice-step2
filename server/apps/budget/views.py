@@ -1,5 +1,3 @@
-import re
-from django.utils import translation
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -8,11 +6,10 @@ from .permissions import IsOwner
 from django.db.models import Sum, Value, DecimalField, Q
 from django.db.models.functions import Coalesce
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg.utils import swagger_auto_schema
 
-from . import models
-from . import serializers
+from . import models, filters, serializers, docs
 from .pagination import StandardResultsSetPagination
-from . import filters
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -51,31 +48,30 @@ class TransactionViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsOwner]
 
     def get_queryset(self):
-        queryset = self.filter_queryset(models.Transaction.objects.all())
-        if self.action == 'global_info':
-            queryset = queryset.aggregate(
-                income=Coalesce(
-                    Sum(
-                        'amount',
-                        filter=Q(category__type=0),
-                    ),
-                    Value(0),
-                    output_field=DecimalField(),
-                ),
-                expense=Coalesce(
-                    Sum(
-                        'amount',
-                        filter=Q(category__type=1),
-                    ),
-                    Value(0),
-                    output_field=DecimalField(),
-                )
-            )
-        return queryset
+        return self.filter_queryset(models.Transaction.objects.all())
 
+    @swagger_auto_schema(**docs.swagger_global_info)
     @action(detail=False, methods=['GET'])
     def global_info(self, request):
-        return Response(self.get_queryset())
+        queryset = self.get_queryset().aggregate(
+            income=Coalesce(
+                Sum(
+                    'amount',
+                    filter=Q(category__type=0),
+                ),
+                Value(0),
+                output_field=DecimalField(),
+            ),
+            expense=Coalesce(
+                Sum(
+                    'amount',
+                    filter=Q(category__type=1),
+                ),
+                Value(0),
+                output_field=DecimalField(),
+            )
+        )
+        return Response(queryset)
 
 
 class WidgetViewSet(viewsets.ModelViewSet):

@@ -1,4 +1,5 @@
 import os
+import datetime
 from pathlib import Path
 
 import dj_database_url
@@ -132,6 +133,16 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+}
+
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+      'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+      }
+   }
 }
 
 ##################################################################
