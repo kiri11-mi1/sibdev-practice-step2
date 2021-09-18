@@ -24,4 +24,4 @@ jobs:
         cd server
         python -m poetry install
     - name: GitHub Action for pytest
-      uses: cclauss/GitHub-Action-for-pytest@0.5.0 ./
+      uses: cclauss/GitHub-Action-for-pytest@0.5.0

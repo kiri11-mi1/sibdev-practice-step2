@@ -1,3 +1,5 @@
+![Build Status](https://github.com/kiri11-mi1/sibdev-practice-step2/workflows/test_on_push/badge.svg)
+
 README
 =====================
 
