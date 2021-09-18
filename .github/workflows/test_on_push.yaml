@@ -3,8 +3,6 @@ name: Run tests on any Push event
 # Они будт тестироваться перед сборкой
 on:
   push:
-    tags:
-      - '!refs/tags/*'
     branches:
       - '*'
 jobs:
@@ -23,6 +21,9 @@ jobs:
         python -m ensurepip
         python -m pip install --upgrade pip
         python -m pip install poetry
+    - name: Go to work dir
+      # Переходим в рабочую директорию
+      run: cd server
     - name: Install requirements
       # Устанавливаем зависимости
       run: python -m poetry install

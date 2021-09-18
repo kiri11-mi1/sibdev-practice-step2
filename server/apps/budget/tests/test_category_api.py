@@ -75,7 +75,3 @@ def test_category_create_with_bearer(api_client_with_user):
     response = api_client_with_user.post(category_url, data=PAYLOAD)
     assert response.status_code == 201
 
-
-@pytest.mark.parametrize('auth_data', AUTH_DATA)
-def test_category_create_without_bearer(api_client_with_user):
-    pass
