@@ -12,7 +12,7 @@ jobs:
     runs-on: [ubuntu-latest]
     steps:
     # Чекаутим код
-    - uses: actions/checkout@master
+    - uses: actions/checkout@feature#8
     # Устанавливаем python нужной версии
     - uses: actions/setup-python@v1
       with:
