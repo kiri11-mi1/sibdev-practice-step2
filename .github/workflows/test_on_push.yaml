@@ -3,8 +3,7 @@ name: Run tests on any Push event
 # Они будт тестироваться перед сборкой
 on:
   push:
-    branches:
-      - '*'
+  pull-request:
 jobs:
   run_tests:
     runs-on: [ubuntu-latest]
@@ -21,11 +20,12 @@ jobs:
         python -m ensurepip
         python -m pip install --upgrade pip
         python -m pip install poetry
-    - name: Go to work dir
-      # Переходим в рабочую директорию
-      run: cd server
     - name: Install requirements
       # Устанавливаем зависимости
-      run: python -m poetry install
+      run: |
+        cd server
+        python -m poetry install
     - name: Run tests
-      run: pytest
+      run: |
+        cd server
+        pytest
