@@ -23,7 +23,5 @@ jobs:
       run: |
         cd server
         python -m poetry install
-    - name: Run tests
-      run: |
-        cd server
-        pytest -h
+        pytest
+
