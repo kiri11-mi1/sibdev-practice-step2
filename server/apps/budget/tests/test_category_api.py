@@ -2,8 +2,11 @@ import pytest
 from apps.budget.models import Category
 from apps.users.models import User
 from django.urls import reverse
+from requests.auth import HTTPBasicAuth
+
 
 pytestmark = [pytest.mark.django_db]
+
 AUTH_DATA = [{'email': 'test@mail.ru', 'username': 'test', 'password': 'qwerty'}]
 PAYLOAD = {
 	"name": "test",
@@ -72,10 +75,7 @@ def test_category_create_with_bearer(api_client_with_user):
     response = api_client_with_user.post(category_url, data=PAYLOAD)
     assert response.status_code == 201
 
+
 @pytest.mark.parametrize('auth_data', AUTH_DATA)
-def test_category_create(api_client_with_user):
-    category_url = reverse('api:budget:category-list')
-    PAYLOAD['owner'] = api_client_with_user.handler._force_user.id
-    api_client_with_user.handler.token_type = 'basic'
-    response = api_client_with_user.post(category_url, data=PAYLOAD)
-    assert response.status_code == 401
+def test_category_create_without_bearer(api_client_with_user):
+    pass
