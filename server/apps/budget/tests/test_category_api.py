@@ -76,5 +76,6 @@ def test_category_create_with_bearer(api_client_with_user):
 def test_category_create(api_client_with_user):
     category_url = reverse('api:budget:category-list')
     PAYLOAD['owner'] = api_client_with_user.handler._force_user.id
+    api_client_with_user.handler.token_type = 'basic'
     response = api_client_with_user.post(category_url, data=PAYLOAD)
-    assert response.status_code == 201
+    assert response.status_code == 401
