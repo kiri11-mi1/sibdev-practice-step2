@@ -4,7 +4,6 @@ from apps.users.models import User
 from django.urls import reverse
 from requests.auth import HTTPBasicAuth
 
-
 pytestmark = [pytest.mark.django_db]
 
 AUTH_DATA = [{'email': 'test@mail.ru', 'username': 'test', 'password': 'qwerty'}]
