@@ -74,4 +74,3 @@ def test_category_create_with_bearer(api_client_with_user):
     PAYLOAD['owner'] = api_client_with_user.handler._force_user.id
     response = api_client_with_user.post(category_url, data=PAYLOAD)
     assert response.status_code == 201
-
