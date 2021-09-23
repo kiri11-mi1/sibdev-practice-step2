@@ -1,5 +1,6 @@
 import pytest
 from django.urls import reverse
+from rest_framework import status
 
 from apps.budget.models import Category
 from apps.users.models import User
@@ -17,7 +18,7 @@ def test_category_delete_owner(api_client_with_user):
     temp_url = reverse('api:budget:category-detail', args=(tmp_category.id,))
     response = api_client_with_user.delete(temp_url)
 
-    assert response.status_code == 204
+    assert response.status_code == status.HTTP_204_NO_CONTENT
     assert Category.objects.all().count() == 0
 
 
@@ -30,7 +31,7 @@ def test_category_delete_not_owner(api_client_with_user):
     temp_url = reverse('api:budget:category-detail', args=(tmp_category.id,))
     response = api_client_with_user.delete(temp_url)
 
-    assert response.status_code == 403
+    assert response.status_code == status.HTTP_403_FORBIDDEN
     assert Category.objects.all().count() == 1
 
 
@@ -40,16 +41,16 @@ def test_category_get_all_auth_user(api_client_with_user):
     tmp_url = reverse('api:budget:category-list')
     response = api_client_with_user.get(tmp_url)
 
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.parametrize('auth_data', AUTH_DATA)
-def test_category_get_global_auth_user(api_client_with_user):
-    """Получение блока Global авторизованным пользователем"""
+def test_category_get_summary_auth_user(api_client_with_user):
+    """Получение суммы транзакций по категориям авторизованным пользователем"""
     tmp_url = reverse('api:budget:category-get-all-categories-info')
     response = api_client_with_user.get(tmp_url)
 
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
 
 
 def test_category_get_all_anon_user(api_client):
@@ -57,38 +58,36 @@ def test_category_get_all_anon_user(api_client):
     tmp_url = reverse('api:budget:category-list')
     response = api_client.get(tmp_url)
 
-    assert response.status_code == 401
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_category_get_global_anon_user(api_client):
-    """Получение блока Global НЕ авторизованным пользователем"""
+def test_category_get_summary_anon_user(api_client):
+    """Получение суммы транзакций по категориям НЕ авторизованным пользователем"""
     tmp_url = reverse('api:budget:category-get-all-categories-info')
     response = api_client.get(tmp_url)
 
-    assert response.status_code == 401
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_category_create_with_basic_auth(request_client):
-    """Создание категории с Basic токеном"""
+def test_category_create_by_anon_user(api_client):
+    """Создание категории не авторизованным пользователем"""
     user = User.objects.create(**AUTH_DATA[0])
-    category_payload["owner"] = user.id
+    category["owner"] = user.id
 
-    tmp_url = "http://testserver" + reverse('api:budget:category-list')
-    response = request_client.post(
-        tmp_url,
-        json=category_payload,
-        headers={'Authorization': 'Basic cbaghvscghsa'}
-    )
+    tmp_url = reverse('api:budget:category-list')
+    response = api_client.post(tmp_url, json=category)
 
-    assert response.status_code == 401
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    assert Category.objects.all().count() == 0
 
 
 @pytest.mark.parametrize('auth_data', AUTH_DATA)
-def test_category_create_with_bearer(api_client_with_user):
-    """Создание категории с Bearer токеном"""
-    category_payload["owner"] = api_client_with_user.handler._force_user.id
+def test_category_create_by_auth_user(api_client_with_user):
+    """Создание категории авторизованным пользователем"""
+    category["owner"] = api_client_with_user.handler._force_user.id
 
     tmp_url = reverse('api:budget:category-list')
-    response = api_client_with_user.post(tmp_url, data=category_payload)
+    response = api_client_with_user.post(tmp_url, data=category)
 
-    assert response.status_code == 201
+    assert response.status_code == status.HTTP_201_CREATED
+    assert Category.objects.all().count() == 1

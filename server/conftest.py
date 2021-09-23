@@ -1,5 +1,5 @@
 import pytest
-from rest_framework.test import APIClient, RequestsClient
+from rest_framework.test import APIClient
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -36,8 +36,3 @@ def api_client_with_user(auth_data: dict) -> APIClient:
     client.force_authenticate(user, RefreshToken.for_user(user).access_token)
  
     return client
-
-
-@pytest.fixture
-def request_client() -> RequestsClient:
-    return RequestsClient()

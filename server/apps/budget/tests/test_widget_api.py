@@ -56,11 +56,11 @@ def test_widget_get_all_anon_user(api_client):
 
 @pytest.mark.parametrize('auth_data', AUTH_DATA)
 def test_widget_create_with_bearer(api_client_with_user):
-    widget_payload["owner"] = api_client_with_user.handler._force_user.id
+    widget["owner"] = api_client_with_user.handler._force_user.id
     category["owner"] = api_client_with_user.handler._force_user
-    widget_payload["category"] = Category.objects.create(**category).id
+    widget["category"] = Category.objects.create(**category).id
 
     tmp_url = reverse('api:budget:widget-list')
-    response = api_client_with_user.post(tmp_url, data=widget_payload)
+    response = api_client_with_user.post(tmp_url, data=widget)
 
     assert response.status_code == 201
