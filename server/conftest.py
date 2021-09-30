@@ -5,8 +5,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 User = get_user_model()
- 
- 
+
+
 @pytest.fixture
 def api_client() -> APIClient:
     """
